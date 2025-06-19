@@ -1,18 +1,16 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { CountryCode } from 'libphonenumber-js';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
-import { Observable } from 'rxjs';
 import { Country } from './core/models/country.interface';
 import { PhoneNumberService } from './core/services/phone-number.service';
-
 
 @Component({
   selector: 'app-root',
   imports: [
     NgIf,
-    AsyncPipe,
     NgxMaskDirective,
     ReactiveFormsModule,
     NgSelectModule
@@ -23,9 +21,9 @@ import { PhoneNumberService } from './core/services/phone-number.service';
 })
 export class AppComponent {
   phoneInputTouched: boolean = false;
-  phoneNumberService: PhoneNumberService = inject(PhoneNumberService)
-  selectedCountry$: Observable<Country> = this.phoneNumberService.selectedCountry$;
+  phoneNumberService: PhoneNumberService = inject(PhoneNumberService);
   getCountries: Country[] = this.phoneNumberService.getCountries();
+  selectedCountry = this.phoneNumberService.selectedCountry;
 
   form: UntypedFormGroup = new UntypedFormGroup({
     country: new UntypedFormControl('TR', Validators.required),
@@ -33,12 +31,9 @@ export class AppComponent {
   });
 
   ngOnInit(): void {
-    this.form.get('country')?.valueChanges.subscribe(country => {
-      this.form.get('phone')?.setValue('')
+    this.form.get('country')?.valueChanges.subscribe((country: CountryCode) => {
+      this.form.get('phone')?.setValue('');
       this.phoneNumberService.setSelectedCountry(country);
-      const phoneControl = this.form.get('phone');
-      phoneControl?.setValidators([Validators.required, this.phoneNumberService.getPhoneValidator()]);
-      phoneControl?.updateValueAndValidity();
     });
   }
 

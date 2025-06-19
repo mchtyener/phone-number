@@ -18,7 +18,7 @@
     <div class="mt-3 col-6">
       <label for="phone" class="form-label">Phone <span class="required-asterisk">*</span></label>
       <input type="text" class="form-control" formControlName="phone" class="form-control" (focus)="onInputFocus()"
-        [mask]="(selectedCountry$ | async)?.mask" [placeholder]="(selectedCountry$ | async)?.placeholder">
+        [mask]="selectedCountry().mask" [placeholder]="selectedCountry().placeholder">
       <div class="text-danger" *ngIf="phoneNumberService.inputPhone && form.get('phone')?.value !=''">
         <small *ngIf="form.get('phone')?.errors?.['invalidPhone']">
           Please enter a valid phone number.

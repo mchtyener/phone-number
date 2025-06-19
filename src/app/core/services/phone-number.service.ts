@@ -1,24 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { CountryCode, PhoneNumber } from 'libphonenumber-js';
 import { MetadataJson, parsePhoneNumberFromString } from 'libphonenumber-js/core';
 
-import { BehaviorSubject } from 'rxjs';
 import metadata from '../../../../metadata.custom.json';
 import { phoneNumberData } from '../data/phone-number-data';
 import { Country } from '../models/country.interface';
-
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class PhoneNumberService {
+  private countries: Country[] = phoneNumberData;
 
-  private countries: Country[] = phoneNumberData
-
-  private selectedCountrySubject = new BehaviorSubject<Country>(this.countries[0]);
-  selectedCountry$ = this.selectedCountrySubject.asObservable();
+  selectedCountry = signal<Country>(this.countries[0]);
 
   inputPhone?: PhoneNumber;
 
@@ -28,7 +23,7 @@ export class PhoneNumberService {
 
   setSelectedCountry(code: CountryCode): void {
     const country = this.countries.find(c => c.code === code) ?? this.countries[0];
-    this.selectedCountrySubject.next(country);
+    this.selectedCountry.set(country);
   }
 
   getPhoneValidator(): ValidatorFn {
@@ -36,7 +31,7 @@ export class PhoneNumberService {
       const value = control.value;
       if (!value) return null;
 
-      const selectedCountry = this.selectedCountrySubject.value;
+      const selectedCountry = this.selectedCountry();
       if (!selectedCountry?.code || !selectedCountry?.countryCode) {
         return { invalidCountry: { value } };
       }
@@ -58,12 +53,9 @@ export class PhoneNumberService {
         }
 
         return null;
-
       } catch (error) {
         return { invalidPhone: { value: fullNumber } };
       }
     };
   }
-
-
 }
