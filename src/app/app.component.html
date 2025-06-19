@@ -19,12 +19,15 @@
       <label for="phone" class="form-label">Phone <span class="required-asterisk">*</span></label>
       <input type="text" class="form-control" formControlName="phone" class="form-control" (focus)="onInputFocus()"
         [mask]="selectedCountry().mask" [placeholder]="selectedCountry().placeholder">
-      <div class="text-danger" *ngIf="phoneNumberService.inputPhone && form.get('phone')?.value !=''">
-        <small *ngIf="form.get('phone')?.errors?.['invalidPhone']">
-          Please enter a valid phone number.
-        </small>
-        <small *ngIf="form.get('phone')?.errors?.['invalidPhoneType']">
-          Not suitable for country phone format</small>
+      <div class="text-danger" *ngIf="inputPhone() && form.get('phone')?.value !=''">
+        <ng-container *ngIf="getFormError as errors">
+          <small *ngIf="errors['invalidPhone']">
+            Please enter a valid phone number.
+          </small>
+          <small *ngIf="errors['invalidPhoneType']">
+            Not suitable for country phone format.
+          </small>
+        </ng-container>
       </div>
       <div class="text-danger" *ngIf="isPhoneInputTouched() && isPhoneNumberInvalid()">
         <small class="error-phone">

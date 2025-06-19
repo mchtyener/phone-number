@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CountryCode } from 'libphonenumber-js';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -24,6 +24,7 @@ export class AppComponent {
   phoneNumberService: PhoneNumberService = inject(PhoneNumberService);
   getCountries: Country[] = this.phoneNumberService.getCountries();
   selectedCountry = this.phoneNumberService.selectedCountry;
+  inputPhone = this.phoneNumberService.inputPhone;
 
   form: UntypedFormGroup = new UntypedFormGroup({
     country: new UntypedFormControl('TR', Validators.required),
@@ -47,6 +48,10 @@ export class AppComponent {
 
   isPhoneNumberInvalid(): boolean {
     return this.phoneInputTouched && !this.form.get('phone')?.value;
+  }
+
+  get getFormError(): ValidationErrors | null | undefined {
+    return this.form.get('phone')?.errors
   }
 
 }

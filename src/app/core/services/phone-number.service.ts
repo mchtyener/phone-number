@@ -12,10 +12,8 @@ import { Country } from '../models/country.interface';
 })
 export class PhoneNumberService {
   private countries: Country[] = phoneNumberData;
-
   selectedCountry = signal<Country>(this.countries[0]);
-
-  inputPhone?: PhoneNumber;
+  inputPhone = signal<PhoneNumber | null>(null);
 
   getCountries(): Country[] {
     return this.countries;
@@ -40,15 +38,14 @@ export class PhoneNumberService {
       const fullNumber = `${selectedCountry.countryCode}${cleanedNumber}`;
 
       try {
-        this.inputPhone = parsePhoneNumberFromString(fullNumber, selectedCountry.code, metadata as MetadataJson);
+        const parsedPhone = parsePhoneNumberFromString(fullNumber, selectedCountry.code, metadata as MetadataJson);
+        this.inputPhone.set(parsedPhone ?? null);
 
-        if (!this.inputPhone || !this.inputPhone.isValid()) {
+        if (!parsedPhone || !parsedPhone.isValid()) {
           return { invalidPhone: { value: fullNumber } };
         }
 
-        const numberType = this.inputPhone.getType();
-
-        if (numberType !== 'MOBILE') {
+        if (parsedPhone.getType() !== 'MOBILE') {
           return { invalidPhoneType: { value: fullNumber } };
         }
 
