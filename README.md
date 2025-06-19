@@ -1,59 +1,110 @@
-# PhoneNumberService
+# Phone Number Service
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+Telefon numarası doğrulama, ülke kodu yönetimi ve maskeleme işlemleri için geliştirilmiş, Angular tabanlı bir web uygulamasıdır.  
+Türkiye, Fas, Mısır, Irak, İran, Kuveyt ve Birleşik Krallık gibi ülkeler için özelleştirilmiş telefon numarası giriş ve doğrulama desteği sunar.
 
-## Development server
+## Özellikler
 
-To start a local development server, run:
+- Farklı ülkeler için telefon numarası doğrulama
+- Ülke kodu seçimi ve yönetimi
+- Ülkeye özel maskeleme ve placeholder desteği
+- Mobil numara tipine özel doğrulama
+- Angular Reactive Forms ile kolay entegrasyon
+- Gerçek zamanlı doğrulama ve hata yönetimi
 
-```bash
-ng serve
+## Kullanılan Teknolojiler ve Paketler
+
+- **Angular**: Uygulama çatısı
+- **libphonenumber-js**: Telefon numarası doğrulama ve biçimlendirme
+- **ngx-mask**: Ülkeye özel maskeleme
+- **Bootstrap**: Arayüz tasarımı
+- **RxJS**: Reactive state yönetimi
+- **Express**: SSR ve sunucu tarafı işlemler
+- **TypeScript**: Güçlü tip desteği
+
+## Metadata Optimizasyonu (`metadata.custom.json`)
+
+Bu projede, telefon numarası doğrulama ve biçimlendirme işlemlerinde kullanılan `libphonenumber-js` kütüphanesinin metadata dosyası, sadece ihtiyaç duyulan ülkeler için özel olarak oluşturulmuştur. Böylece uygulamanın boyutu ve yükleme süresi önemli ölçüde azaltılır.
+
+- **Amaç:** Orijinal metadata dosyası çok büyük olduğu için, sadece EG, GB, IQ, IR, KW, MA, TR ülkeleri için optimize edilmiş bir JSON dosyası kullanılır.
+- **Oluşturma:** Yeni veya güncel metadata dosyası oluşturmak için aşağıdaki komutu kullanabilirsiniz:
+  ```bash
+  npm run generate-libphonenumber-metadata
+  ```
+  Bu komut, `metadata.custom.json` dosyasını günceller.
+- **Kullanım:**
+  - `PhoneNumberService` içinde bu dosya doğrudan import edilir:
+    ```typescript
+    import metadata from "../../../../metadata.custom.json";
+    ```
+  - Doğrulama işlemlerinde, `parsePhoneNumberFromString` fonksiyonuna metadata parametresi olarak verilir.
+
+## Kurulum
+
+1. Bağımlılıkları yükleyin:
+
+   ```bash
+   npm install
+   ```
+
+2. Geliştirme sunucusunu başlatın:
+
+   ```bash
+   npm start
+   ```
+
+   veya
+
+   ```bash
+   ng serve
+   ```
+
+3. Uygulamayı tarayıcıda açın:  
+   [http://localhost:4200](http://localhost:4200)
+
+## Telefon Numarası Doğrulama ve Maskeleme
+
+- Her ülke için `src/app/core/data/phone-number-data.ts` dosyasında maske ve placeholder tanımlıdır.
+- Doğrulama işlemleri `PhoneNumberService` ile yapılır. Sadece mobil numaralar geçerli kabul edilir.
+- Maskeleme için `ngx-mask` kullanılır ve maske, seçilen ülkeye göre dinamik olarak uygulanır.
+
+## Örnek Kullanım
+
+```typescript
+// FormControl ile telefon doğrulama
+phoneControl = new FormControl("", this.phoneNumberService.getPhoneValidator());
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Komutlar
 
-## Code scaffolding
+- **Projeyi başlat:**  
+  `npm start` veya `ng serve`
+- **Testleri çalıştır:**  
+  `ng test`
+- **SSR sunucusunu başlat:**  
+  `npm run serve:ssr:phone-number-service`
+- **Libphonenumber metadata güncelle:**  
+  `npm run generate-libphonenumber-metadata`
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Proje Yapısı
 
-```bash
-ng generate component component-name
+```
+src/
+  app/
+    core/
+      data/                # Ülke ve telefon numarası verileri
+      models/              # Tip ve arayüzler
+      services/            # Doğrulama ve yönetim servisleri
+    assets/flags/          # Ülke bayrakları
+  main.ts                  # Angular giriş noktası
+  server.ts                # SSR sunucu dosyası
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Katkı Sağlama
 
-```bash
-ng generate --help
-```
+Katkıda bulunmak için lütfen bir fork oluşturun ve pull request gönderin.  
+Kodunuzu göndermeden önce testlerin geçtiğinden emin olun.
 
-## Building
+## Lisans
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Bu proje MIT lisansı ile lisanslanmıştır.
